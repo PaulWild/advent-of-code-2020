@@ -98,7 +98,7 @@ namespace AdventOfCode
         {
             var type = typeof(ISolution);
 
-            return Assembly.GetEntryAssembly()?.DefinedTypes
+            return Assembly.GetExecutingAssembly()?.DefinedTypes
                 .Where(x => x.ImplementedInterfaces.Contains(type))
                 .Select(impl => (ISolution)Activator.CreateInstance(impl))
                 .OrderBy(sol => sol?.Day);

@@ -14,7 +14,7 @@ namespace AdventOfCode
         string[] Input()
         {
             var filePath = Path.Combine(
-                Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location) ?? string.Empty, 
+                Path.GetDirectoryName(Assembly.GetExecutingAssembly()?.Location) ?? string.Empty, 
                 $"Input/day_{Day}.txt");
             return File.ReadAllLines(filePath);
         }
