@@ -106,23 +106,26 @@ namespace AdventOfCode
 
         private static async Task BootStrap(int day, IConsole console)
         {
+            var padding = day > 9 ? "" : "0";
+            
             //Main File
-            var text = await File.ReadAllTextAsync("./AdventOfCode/Days/Day0.cs");
-            var newText = text.Replace("0", day.ToString());
-            await File.WriteAllTextAsync($"./AdventOfCode/Days/Day{day}.cs", newText);
+            var text = await File.ReadAllTextAsync("./AdventOfCode/Days/Day00.cs");
+            var newText = text.Replace("00", padding + day);
+            await File.WriteAllTextAsync($"./AdventOfCode/Days/Day{padding}{day}.cs", newText);
            
             //Test File
-            var testText = await File.ReadAllTextAsync("./AdventOfCode.Tests/Days/Day0Tests.cs");
-            var newTestText = testText.Replace("0", day.ToString()).Replace("(Skip = \"Scaffold\")", "");
-            await File.WriteAllTextAsync($"./AdventOfCode.Tests/Days/Day0{day}Tests.cs", newTestText);
-
+            var testText = await File.ReadAllTextAsync("./AdventOfCode.Tests/Days/Day00Tests.cs");
+            var newTestText = testText.Replace("00", padding + day).Replace("(Skip = \"Scaffold\")", "");
+            await File.WriteAllTextAsync($"./AdventOfCode.Tests/Days/Day{padding}{day}Tests.cs", newTestText);
+            
             //Input Data
             var session = Environment.GetEnvironmentVariable("AOC_SESSION_ID");
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add("cookie", $"session={session}");
             
             var inputString = await client.GetStringAsync($"https://adventofcode.com/{Year}/day/{day}/input");
-            await File.WriteAllTextAsync($"./AdventOfCode/Input/day_{day}.txt", inputString);
+            await File.WriteAllTextAsync($"./AdventOfCode/Input/day_{padding}{day}.txt", inputString);
+
         }
     }
 }

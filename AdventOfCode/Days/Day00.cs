@@ -2,7 +2,7 @@
 
 namespace AdventOfCode.Days
 {
-    public class Day0 : ISolution
+    public class Day00 : ISolution
     {
         public string PartOne(string[] input)
         {
@@ -14,6 +14,6 @@ namespace AdventOfCode.Days
             throw new NotImplementedException();
         }
 
-        public int Day => 0;
+        public int Day => 00;
     }
 }

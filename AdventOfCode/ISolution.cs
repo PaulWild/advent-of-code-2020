@@ -13,9 +13,11 @@ namespace AdventOfCode
 
         string[] Input()
         {
+            var padding = Day > 9 ? "" : "0";
+
             var filePath = Path.Combine(
                 Path.GetDirectoryName(Assembly.GetExecutingAssembly()?.Location) ?? string.Empty, 
-                $"Input/day_{Day}.txt");
+                $"Input/day_{padding}{Day}.txt");
             return File.ReadAllLines(filePath);
         }
     }

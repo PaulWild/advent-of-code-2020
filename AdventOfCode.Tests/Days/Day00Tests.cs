@@ -6,9 +6,9 @@ using Xunit;
 namespace AdventOfCode.Tests.Days
 {
     
-    public class Day0Tests
+    public class Day00Tests
     {
-        private readonly ISolution _sut = new Day0();
+        private readonly ISolution _sut = new Day00();
         
         [Fact(Skip = "Scaffold")]
         public void PartOne_WhenCalled_DoesNotThrowNotImplementedException()
