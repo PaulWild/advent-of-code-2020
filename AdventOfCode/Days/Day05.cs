@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace AdventOfCode.Days
 {
@@ -8,14 +9,14 @@ namespace AdventOfCode.Days
     {
         public string PartOne(string[] input)
         {
-            var results = CalculateSeatIds(input);
+            var results = CalculateSeatIdsPostMegaThreadRead(input);
 
             return results.Max().ToString();
         }
         
         public string PartTwo(string[] input)
         {
-            var results = CalculateSeatIds(input);
+            var results = CalculateSeatIdsPostMegaThreadRead(input);
             var min = results.Min();
             var max = results.Max();
 
@@ -61,6 +62,21 @@ namespace AdventOfCode.Days
             }
 
             return results;
+        }
+        
+        private static IEnumerable<int> CalculateSeatIdsPostMegaThreadRead(IEnumerable<string> input)
+        {
+            return input
+                .Select(str => str.ToCharArray())
+                .Select(chrs => chrs.Select(chr => chr switch
+                {
+                    'F' => 0,
+                    'B' => 1,
+                    'L' => 0,
+                    'R' => 1
+                }))
+                .Select(x => string.Join("", x))
+                .Select(x => Convert.ToInt32(x.ToString(), 2));
         }
         
         public int Day => 05;
