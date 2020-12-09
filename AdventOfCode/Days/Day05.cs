@@ -16,7 +16,7 @@ namespace AdventOfCode.Days
         
         public string PartTwo(string[] input)
         {
-            var results = CalculateSeatIdsPostMegaThreadRead(input);
+            var results = CalculateSeatIdsPostMegaThreadRead(input).ToList();
             var min = results.Min();
             var max = results.Max();
 
@@ -73,7 +73,8 @@ namespace AdventOfCode.Days
                     'F' => 0,
                     'B' => 1,
                     'L' => 0,
-                    'R' => 1
+                    'R' => 1,
+                    _ => throw new ArgumentOutOfRangeException(nameof(chr), chr, null)
                 }))
                 .Select(x => string.Join("", x))
                 .Select(x => Convert.ToInt32(x.ToString(), 2));

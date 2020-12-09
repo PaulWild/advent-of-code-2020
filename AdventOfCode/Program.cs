@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using System.CommandLine.IO;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace AdventOfCode
@@ -18,18 +18,20 @@ namespace AdventOfCode
         
         static Task<int> Main(string[] args)
         {
+            Console.OutputEncoding = Encoding.UTF8;
+
             var aoc = new Command("aoc", "run advent of code solutions")
             {
                 new Argument<int?>("day", "Day to run."),
                 new Option<int?>(new[] { "--part", "-p" }, "The part to run"),
             };
-            aoc.Handler = CommandHandler.Create<int?, int?, IConsole>(RunSolutionForDay);
+            aoc.Handler = CommandHandler.Create<int?, int?>(RunSolutionForDay);
 
             var bootstrap = new Command("bootstrap", "bootstrap a new advent of code day")
             {
                 new Argument<int>("day", "day to bootstrap")
             };
-            bootstrap.Handler = CommandHandler.Create<int, IConsole>(BootStrap);
+            bootstrap.Handler = CommandHandler.Create<int>(BootStrap);
             
             var root = new RootCommand
             {
@@ -37,24 +39,27 @@ namespace AdventOfCode
                 bootstrap
             };
             
+            
             return root.InvokeAsync(args);
         }
 
-        static void RunSolutionForDay(int? day, int? part, IConsole console)
+        static void RunSolutionForDay(int? day, int? part)
         {
             var solutions = GetSolutionsToRun(day);
             
+            Console.WriteLine($"Advent Of Code");
+            
             foreach (var solution in solutions)
             {
-                console.Out.WriteLine($"Advent of code - Day {solution.Day}");
+                Console.WriteLine($"Day {solution.Day}");
 
                 if (!part.HasValue || part == 1)
                 {
-                    RunSolutionPart(() => solution.PartOne(solution.Input()), 1, console);
+                    RunSolutionPart(() => solution.PartOne(solution.Input()), 1);
                 }
                 if (!part.HasValue || part == 2)
                 {
-                    RunSolutionPart(() => solution.PartTwo(solution.Input()), 2, console);
+                    RunSolutionPart(() => solution.PartTwo(solution.Input()), 2);
                 }
             }
         }
@@ -78,7 +83,7 @@ namespace AdventOfCode
             return solutions;
         }
 
-        private static void RunSolutionPart(Func<string> solutionFunc, int part, IConsole console)
+        private static void RunSolutionPart(Func<string> solutionFunc, int part)
         {
             try
             {
@@ -86,18 +91,46 @@ namespace AdventOfCode
                 timer.Start();
                 var answer = solutionFunc();
                 timer.Stop();
-                
-                console.Out.WriteLine(SolutionText(part, answer, timer.ElapsedMilliseconds));
+
+                PrintSolution(part, answer, timer.ElapsedMilliseconds);
             }
             catch (NotImplementedException)
             {
-                console.Error.WriteLine(ErrorText(part));
+                PrintError(part);
             }
         }
 
-        private static string SolutionText(int part, string answer, long timeInMillis) => $"\tAnswer to Part {part} is: {answer}. Time Taken: {timeInMillis}ms";
+        private static void PrintSolution(int part, string answer, long timeInMillis)
+        {
+            Output.Write("  \u2714")
+                .WithForegroundColour(ConsoleColor.Green)
+                .Run();
+            Output.Write($" - Part {part}: {answer} ")
+                .Run();
+            
+            var icon = timeInMillis > 50
+                ? "\u231B" 
+                : "";
+            
+            var timeColor = timeInMillis > 50  
+                ? timeInMillis > 100 
+                    ? ConsoleColor.Red 
+                    : ConsoleColor.Yellow 
+                : ConsoleColor.Green;
+            
+            Output.Write($"[{icon}{timeInMillis}ms] {Environment.NewLine}")
+                .WithForegroundColour(timeColor)
+                .Run();
+        }
 
-        private static string ErrorText(int part) => $"\tPart {part} has not been solved";
+        private static void PrintError(int part)
+        {
+            Output.Write("  \u2718")
+                .WithForegroundColour(ConsoleColor.Red)
+                .Run();
+            Output.Write($" - Part {part} has not been solved{Environment.NewLine}")
+                .Run();
+        }
 
         private static IEnumerable<ISolution> Solutions()
         {
@@ -106,10 +139,11 @@ namespace AdventOfCode
             return Assembly.GetExecutingAssembly()?.DefinedTypes
                 .Where(x => x.ImplementedInterfaces.Contains(type))
                 .Select(impl => (ISolution)Activator.CreateInstance(impl))
+                .Where(x => x != null && x.Day != 0)
                 .OrderBy(sol => sol?.Day);
         }
 
-        private static async Task BootStrap(int day, IConsole console)
+        private static async Task BootStrap(int day)
         {
             var padding = day > 9 ? "" : "0";
             
