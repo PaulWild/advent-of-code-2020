@@ -24,7 +24,7 @@ namespace AdventOfCode.Days
                 switch (newIns[i].ins)
                 {
                     case "acc":
-                        break;
+                        continue;
                     case "jmp":
                         newIns[i] = ("nop", newIns[i].val);
                         break;

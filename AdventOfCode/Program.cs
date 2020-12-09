@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.IO;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -81,8 +82,12 @@ namespace AdventOfCode
         {
             try
             {
+                var timer = new Stopwatch();
+                timer.Start();
                 var answer = solutionFunc();
-                console.Out.WriteLine(SolutionText(part, answer));
+                timer.Stop();
+                
+                console.Out.WriteLine(SolutionText(part, answer, timer.ElapsedMilliseconds));
             }
             catch (NotImplementedException)
             {
@@ -90,7 +95,7 @@ namespace AdventOfCode
             }
         }
 
-        private static string SolutionText(int part, string answer) => $"\tAnswer to Part {part} is: {answer}";
+        private static string SolutionText(int part, string answer, long timeInMillis) => $"\tAnswer to Part {part} is: {answer}. Time Taken: {timeInMillis}ms";
 
         private static string ErrorText(int part) => $"\tPart {part} has not been solved";
 

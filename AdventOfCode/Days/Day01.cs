@@ -8,33 +8,23 @@ namespace AdventOfCode.Days
     {
         public string PartOne(string[] input)
         {
-            var numbers = input.Select(item => Convert.ToInt32(item)).ToList();
+            var numbers = input.Select(int.Parse).ToList();
 
-            List<(int fst, int snd)> pairs = (from num in numbers 
+            return (from num in numbers 
                 from other in numbers 
-                where num != other
-                select (num, other)).ToList();
-            
-            return pairs.Where(x => x.fst + x.snd == 2020)
-                .Select(x => x.fst * x.snd)
-                .First()
-                .ToString();
+                where num + other == 2020
+                select num * other).First().ToString();
         }
 
         public string PartTwo(string[] input)
         {
-            var numbers = input.Select(item => Convert.ToInt32(item)).ToList();
-            
-            List<(int fst, int snd, int thd)> triples = (from num in numbers 
-                from other in numbers 
+            var numbers = input.Select(int.Parse).ToList();
+
+            return (from num in numbers
+                from other in numbers
                 from third in numbers
-                where num != other && num != third
-                select (num, other, third)).ToList();
-            
-            return triples.Where(x => x.fst + x.snd + x.thd == 2020)
-                .Select(x => x.fst * x.snd * x.thd)
-                .First()
-                .ToString();
+                where num + other + third == 2020
+                select num * other * third).First().ToString();
         }
 
         public int Day => 01;

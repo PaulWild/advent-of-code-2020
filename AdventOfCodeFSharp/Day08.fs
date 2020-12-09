@@ -36,8 +36,8 @@ module Day08 =
    
     let alteredInstructions instructions =
         seq { for i in 0 .. Seq.length instructions do
-                let newInstruction = changeInstruction (Seq.item i instructions)
-                yield   (instructions |> Seq.skip (i+1)) |> Seq.append ([newInstruction] |> Seq.append (Seq.take i instructions)) 
+               let newInstruction = changeInstruction (Seq.item i instructions)
+               yield Array.mapi (fun idx item -> if (idx = i) then newInstruction else item) instructions
             }
       
     let part1 = runProgram lines 0 0 Set.empty
