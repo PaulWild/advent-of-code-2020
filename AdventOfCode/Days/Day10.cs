@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -25,16 +24,28 @@ namespace AdventOfCode.Days
             
             
             var jolts =  input.Select(int.Parse).OrderBy(x => x).ToList();
+
+            //DP
+            jolts.Insert(0,0);
+            seensValues[jolts.Count - 1] = 1;
+            
+            return Part2DynamicProgramming(0, jolts).ToString();
+            
+            //Original Solution
+            return PartTwoOriginal(jolts);
+        }
+
+        private string PartTwoOriginal(List<int> jolts)
+        {
             var joltDifferences = jolts
                 .Select((x, idx) => idx == 0 ? x : (x - jolts[idx - 1]));
-            
+
             return string.Join("", joltDifferences)
                 .Split("3").Select(x => gapCombos[x.Length])
-                .Aggregate((agg,nxt) => agg*nxt)
+                .Aggregate((agg, nxt) => agg * nxt)
                 .ToString();
-
         }
-        
+
         //Calculated these by hand. There probably is a sequence here to generate any combo
         private Dictionary<int, long> gapCombos = new()
         {
@@ -44,6 +55,31 @@ namespace AdventOfCode.Days
             {3, 4},
             {4, 7}
         };
+
+        private Dictionary<int,long> seensValues = new()
+        {
+            
+        };
+        public long Part2DynamicProgramming(int idx, List<int> list)
+        {
+            var j = idx+1;
+
+            if (seensValues.ContainsKey(idx))
+            {
+                return seensValues[idx];
+            }
+            long pathsAtIdx = 0;
+            while (j < list.Count && list[j] - list[idx] <= 3)
+            {
+                pathsAtIdx += Part2DynamicProgramming(j, list);
+                j++;
+            }
+
+            seensValues.Add(idx, pathsAtIdx);
+            return pathsAtIdx;
+
+        }
+        
         
         public int Day => 10;
     }
