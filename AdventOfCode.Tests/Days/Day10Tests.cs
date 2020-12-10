@@ -25,5 +25,49 @@ namespace AdventOfCode.Tests.Days
             
             act.Should().NotThrow<NotImplementedException>();
         }
-    }
+        
+        [Fact]
+        public void PartTwo_WhenCalled_Works()
+        {
+            var input = new[]
+            {
+                "28",
+                "33",
+                "18",
+                "42",
+                "31",
+                "14",
+                "46",
+                "20",
+                "48",
+                "47",
+                "24",
+                "23",
+                "49",
+                "45",
+                "19",
+                "38",
+                "39",
+                "11",
+                "1",
+                "32",
+                "25",
+                "35",
+                "8",
+                "17",
+                "7",
+                "9",
+                "4",
+                "2",
+                "34",
+                "10",
+                "3",
+            };
+            var res = _sut.PartTwo(input);
+
+            res.Should().Be("19208");
+        }
+        
+     
+    }   
 }
