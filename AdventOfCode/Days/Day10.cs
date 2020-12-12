@@ -21,17 +21,15 @@ namespace AdventOfCode.Days
         public string PartTwo(string[] input)
         {
             //Assumption: Only ever gaps of 1 or 3 in the input space.
-            
-            
             var jolts =  input.Select(int.Parse).OrderBy(x => x).ToList();
 
-            //DP
+            //***DP***//
             jolts.Insert(0,0);
             seensValues[jolts.Count - 1] = 1;
             
             return Part2DynamicProgramming(0, jolts).ToString();
             
-            //Original Solution
+            //My Original Solution
             return PartTwoOriginal(jolts);
         }
 
@@ -56,11 +54,9 @@ namespace AdventOfCode.Days
             {4, 7}
         };
 
-        private Dictionary<int,long> seensValues = new()
-        {
-            
-        };
-        public long Part2DynamicProgramming(int idx, List<int> list)
+        private Dictionary<int,long> seensValues = new();
+
+        private long Part2DynamicProgramming(int idx, List<int> list)
         {
             var j = idx+1;
 
