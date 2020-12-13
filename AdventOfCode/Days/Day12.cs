@@ -29,49 +29,43 @@ namespace AdventOfCode.Days
             return instructions;
         }
 
-        private Ship ProcessDirection(Instruction instruction, Ship currentShip)
+        private static Ship ProcessDirection(Instruction instruction, Ship currentShip) => instruction.Direction switch
         {
-            return instruction.Direction switch
-            {
-                "N" => currentShip with { Location =
-                    (currentShip.Location.x, currentShip.Location.y - instruction.Distance) },
-                "E" => currentShip with { Location =
-                    (currentShip.Location.x + instruction.Distance, currentShip.Location.y) },
-                "S" => currentShip with { Location =
-                    (currentShip.Location.x, currentShip.Location.y + instruction.Distance) },
-                "W" => currentShip with { Location =
-                    (currentShip.Location.x - instruction.Distance, currentShip.Location.y) },
-                "L" => currentShip with { Direction = Turn(currentShip.Direction, instruction)},
-                "R" => currentShip with { Direction = Turn(currentShip.Direction, instruction)},
-                "F" => currentShip with { Location = (
-                    currentShip.Location.x + instruction.Distance * currentShip.Direction.dx,
-                    currentShip.Location.y + instruction.Distance * currentShip.Direction.dy) },
-                _ => throw new Exception("invalid direction")
-            };
-        }
-        
-        private Ship ProcessDirectionPartTwo(Instruction instruction, Ship currentShip)
-        {
-            return instruction.Direction switch
-            {
-                "N" => currentShip with { Direction =
-                    (currentShip.Direction.dx, currentShip.Direction.dy - instruction.Distance) },
-                "E" => currentShip with { Direction =
-                    (currentShip.Direction.dx + instruction.Distance, currentShip.Direction.dy) },
-                "S" => currentShip with { Direction =
-                    (currentShip.Direction.dx, currentShip.Direction.dy + instruction.Distance) },
-                "W" => currentShip with { Direction =
-                    (currentShip.Direction.dx - instruction.Distance, currentShip.Direction.dy) },
-                "L" => currentShip with { Direction = Turn(currentShip.Direction, instruction)},
-                "R" => currentShip with { Direction = Turn(currentShip.Direction, instruction)},
-                "F" => currentShip with { Location = (
-                    currentShip.Location.x + instruction.Distance * currentShip.Direction.dx,
-                    currentShip.Location.y + instruction.Distance * currentShip.Direction.dy) },
-                _ => throw new Exception("invalid direction")
-            };
-        }
+            "N" => currentShip with { Location =
+                (currentShip.Location.x, currentShip.Location.y - instruction.Distance) },
+            "E" => currentShip with { Location =
+                (currentShip.Location.x + instruction.Distance, currentShip.Location.y) },
+            "S" => currentShip with { Location =
+                (currentShip.Location.x, currentShip.Location.y + instruction.Distance) },
+            "W" => currentShip with { Location =
+                (currentShip.Location.x - instruction.Distance, currentShip.Location.y) },
+            "L" => currentShip with { Direction = Turn(currentShip.Direction, instruction)},
+            "R" => currentShip with { Direction = Turn(currentShip.Direction, instruction)},
+            "F" => currentShip with { Location = (
+                currentShip.Location.x + instruction.Distance * currentShip.Direction.dx,
+                currentShip.Location.y + instruction.Distance * currentShip.Direction.dy) },
+            _ => throw new Exception("invalid direction")
+        };
 
-        private (int dx, int dy) Turn((int dx, int dy) currentDirection, Instruction instruction)
+        private static Ship ProcessDirectionPartTwo(Instruction instruction, Ship currentShip) => instruction.Direction switch
+        {
+            "N" => currentShip with { Direction =
+                (currentShip.Direction.dx, currentShip.Direction.dy - instruction.Distance) },
+            "E" => currentShip with { Direction =
+                (currentShip.Direction.dx + instruction.Distance, currentShip.Direction.dy) },
+            "S" => currentShip with { Direction =
+                (currentShip.Direction.dx, currentShip.Direction.dy + instruction.Distance) },
+            "W" => currentShip with { Direction =
+                (currentShip.Direction.dx - instruction.Distance, currentShip.Direction.dy) },
+            "L" => currentShip with { Direction = Turn(currentShip.Direction, instruction)},
+            "R" => currentShip with { Direction = Turn(currentShip.Direction, instruction)},
+            "F" => currentShip with { Location = (
+                currentShip.Location.x + instruction.Distance * currentShip.Direction.dx,
+                currentShip.Location.y + instruction.Distance * currentShip.Direction.dy) },
+            _ => throw new Exception("invalid direction")
+        };
+
+        private static (int dx, int dy) Turn((int dx, int dy) currentDirection, Instruction instruction)
         {
             for (var i = 1; i <= instruction.Distance / 90; i++)
             {
