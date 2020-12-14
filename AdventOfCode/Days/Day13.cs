@@ -32,7 +32,7 @@ namespace AdventOfCode.Days
                 .Split(",")
                 .Select((time, idx) => (time, idx))
                 .Where(x => x.time != "x")
-                .Select(x => (int.Parse(x.time), x.idx))
+                .Select(x => (int.Parse(x.time), x.idx)) 
                 .OrderBy(x => x.Item1)
                 .ToList();
             
