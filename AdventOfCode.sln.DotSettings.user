@@ -3,5 +3,6 @@
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;xUnit::B8EDE237-FA5F-4415-B5C1-2E0D76B3CFC4::net5.0::AdventOfCode.Tests.Days.Day13Tests.PartTwo_WhenCalled_ShouldWork&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::B8EDE237-FA5F-4415-B5C1-2E0D76B3CFC4::net5.0::AdventOfCode.Tests.Days.Day14Tests.PartTwo_WhenCalled_WorksWithInput&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::B8EDE237-FA5F-4415-B5C1-2E0D76B3CFC4::net5.0::AdventOfCode.Tests.Days.Day15Tests.PartOne_WhenCalled_ShowWorkWithExample&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
