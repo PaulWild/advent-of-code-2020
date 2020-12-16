@@ -41,19 +41,8 @@ namespace AdventOfCode.Days
                     var potentialHeadings = new List<string>();
                     foreach (var (key, value) in groupedRules)
                     {
-                        var inValid = false;
-                        foreach (var ticket in validTickets)
-                        {
-                            inValid = value
-                                .All(x => ticket[i] < x.from || ticket[i] > x.to);
-
-                            if (inValid)
-                                break;
-                        }
-
-                        if (inValid) continue;
-
-                        potentialHeadings.Add(key);
+                        if (!validTickets.Any(x => value.All(y => x[i] < y.from || x[i] > y.to)))
+                            potentialHeadings.Add(key);
                     }
 
                     if (potentialHeadings.Count != 1) continue;
