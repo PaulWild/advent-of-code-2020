@@ -30,7 +30,7 @@ namespace AdventOfCode.Days
             return Part2DynamicProgramming(0, jolts).ToString();
             
             //My Original Solution
-            return PartTwoOriginal(jolts);
+            //return PartTwoOriginal(jolts);
         }
 
         private string PartTwoOriginal(List<int> jolts)
