@@ -9,96 +9,76 @@ namespace AdventOfCode.Days
     {
         public string PartOne(string[] input)
         {
-            ulong accum = 0L;
-            foreach (var str in input)
-            {
-                var opStr = str;
-                var a = new Regex(@"\([\d +*]+\)");
-
-                while (a.IsMatch(opStr))
-                {
-                    var toReduce = a.Match(opStr).Value;
-                    var toReplace = Reduce(toReduce.Substring(1, toReduce.Length - 2));
-                    opStr = opStr.Replace(toReduce, toReplace.ToString());
-                }
-
-                accum += Reduce(opStr);
-            }
-
-
-            return accum.ToString();
+            return RunSolution(input, Reduce);
         }
-
-        private static ulong Reduce(string input)
-        {
-            var chars = input.Split(" ").ToList();
-
-            var accum = ulong.Parse(chars.First());
-
-            var operations = new Dictionary<string, Func<ulong, ulong, ulong>>
-            {
-                {"+", (a, b) => a + b},
-                {"*", (a, b) => a * b}
-            };
-            Func<ulong, ulong, ulong> opp = (_, _) => throw new NotImplementedException();
-
-            foreach (var c in chars.Skip(1))
-            {
-                switch (c)
-                {
-                    case "+":
-                        opp = operations["+"];
-                        break;
-                    case "*":
-                        opp = operations["*"];
-                        break;
-                    default:
-                        accum = opp(accum, ulong.Parse(c));
-                        break;
-                }
-            }
-
-            return accum;
-        }
-
+        
         public string PartTwo(string[] input)
         {
-            ulong accum = 0L;
+            return RunSolution(input, ReducePart2);
+        }
 
+        private static string RunSolution(string[] input, Func<string ,string> reducer)
+        {
+            long accum = 0L;
             foreach (var str in input)
             {
                 var opStr = str;
+                var brackets = new Regex(@"\([\d +*]+\)");
 
-                var a = new Regex(@"\([\d +*]+\)");
-                var additionRegex = new Regex(@"\d+ \+ \d+");
 
-                while (a.IsMatch(opStr))
+                while (brackets.IsMatch(opStr))
                 {
-                    var toReduce = a.Match(opStr).Value;
-                    var toReplace = toReduce.Substring(1, toReduce.Length - 2);
-
-                    while (additionRegex.IsMatch(toReplace))
-                    {
-                        var additionReduce = additionRegex.Match(toReplace).Value;
-                        toReplace = additionRegex.Replace(toReplace, Reduce(additionReduce).ToString(), 1);
-                    }
-
-                    opStr = opStr.Replace(toReduce, Reduce(toReplace).ToString());
-
+                    var toReduce = brackets.Match(opStr).Value;
+                    var toReplace = reducer(toReduce.Substring(1, toReduce.Length - 2));
+                    opStr = opStr.Replace(toReduce, toReplace);
                 }
 
-                while (additionRegex.IsMatch(opStr))
-                {
-                    var additionReduce = additionRegex.Match(opStr).Value;
-                    opStr = additionRegex.Replace(opStr, Reduce(additionReduce).ToString(), 1);
-                }
-                
-                accum += Reduce(opStr);
+
+                accum += long.Parse(reducer(opStr));
             }
 
 
             return accum.ToString();
         }
+
+        private static string Reduce(string input)
+        {
+            var op = new Regex(@"(?'left'\d+) (?'op'[+*]) (?'right'\d+)");
+
+            while (op.IsMatch(input))
+            {
+                var match = op.Match(input);
+                var replacement  = match.Groups["op"].Value == "+" 
+                    ? (long.Parse(match.Groups["left"].Value) + long.Parse(match.Groups["right"].Value)).ToString() 
+                    : (long.Parse(match.Groups["left"].Value) * long.Parse(match.Groups["right"].Value)).ToString();
+                input = op.Replace(input, replacement, 1);
+            }
+
+            return input;
+        }
+        
+        private static string ReducePart2(string input)
+        {
+            var addition = new Regex(@"(?'left'\d+) \+ (?'right'\d+)");
+            var multiply = new Regex(@"(?'left'\d+) \* (?'right'\d+)");
+            
+            while (addition.IsMatch(input))
+            {
+                var match = addition.Match(input);
+                var replacement = (long.Parse(match.Groups["left"].Value) + long.Parse(match.Groups["right"].Value)).ToString();
+                input = addition.Replace(input, replacement, 1);
+            }
+            
+            while (multiply.IsMatch(input))
+            {
+                var match = multiply.Match(input);
+                var replacement = (long.Parse(match.Groups["left"].Value) * long.Parse(match.Groups["right"].Value)).ToString();
+                input = multiply.Replace(input, replacement, 1);
+            }
+
+            return input;
+        }
+
 
         public int Day => 18;
     }
