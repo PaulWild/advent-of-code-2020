@@ -17,10 +17,17 @@
       &lt;TestId&gt;xUnit::B8EDE237-FA5F-4415-B5C1-2E0D76B3CFC4::net5.0::AdventOfCode.Tests.Days.Day18Tests.PartTwo_WhenCalled_WorksWithExampleOne&lt;/TestId&gt;&#xD;
       &lt;TestId&gt;xUnit::B8EDE237-FA5F-4415-B5C1-2E0D76B3CFC4::net5.0::AdventOfCode.Tests.Days.Day18Tests.PartTwo_WhenCalled_WorksWithExampleThree&lt;/TestId&gt;&#xD;
       &lt;TestId&gt;xUnit::B8EDE237-FA5F-4415-B5C1-2E0D76B3CFC4::net5.0::AdventOfCode.Tests.Days.Day18Tests.PartTwo_WhenCalled_DoesNotThrowNotImplementedException&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::B8EDE237-FA5F-4415-B5C1-2E0D76B3CFC4::net5.0::AdventOfCode.Tests.Days.Day19Tests.PartTwo_WhenCalled_DoesNotThrowNotImplementedException&lt;/TestId&gt;&#xD;
     &lt;/TestAncestor&gt;&#xD;
     &lt;ProjectFile&gt;B8EDE237-FA5F-4415-B5C1-2E0D76B3CFC4/d:Days/f:Day17Tests.cs&lt;/ProjectFile&gt;&#xD;
   &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=40656208_002Df4f6_002D416f_002Db721_002D49a69d9c6c5d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="PartTwo_WhenCalled_WorksWithExampleThree" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;ProjectFile&gt;B8EDE237-FA5F-4415-B5C1-2E0D76B3CFC4/d:Days/f:Day18Tests.cs&lt;/ProjectFile&gt;&#xD;
+  &lt;Or&gt;&#xD;
+    &lt;ProjectFile&gt;B8EDE237-FA5F-4415-B5C1-2E0D76B3CFC4/d:Days/f:Day18Tests.cs&lt;/ProjectFile&gt;&#xD;
+    &lt;TestAncestor&gt;&#xD;
+      &lt;TestId&gt;xUnit::B8EDE237-FA5F-4415-B5C1-2E0D76B3CFC4::net5.0::AdventOfCode.Tests.Days.Day19Tests.PartTwo_WhenCalled_DoesNotThrowNotImplementedException&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::B8EDE237-FA5F-4415-B5C1-2E0D76B3CFC4::net5.0::AdventOfCode.Tests.Days.Day19Tests.PartTwo_WhenCalled_Works&lt;/TestId&gt;&#xD;
+    &lt;/TestAncestor&gt;&#xD;
+  &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
