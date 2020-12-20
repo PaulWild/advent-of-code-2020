@@ -11,12 +11,16 @@ namespace AdventOfCode.Days
             var tiles = ParseInput(input);
             var tileSides = TilesWithMatchingEdges(tiles);
             var distinctTiles = tiles.Select(x => x.Id.Id).Distinct().Count();
-            var images = BuildImage(new List<TileSides>(), tileSides, (int) Math.Sqrt(distinctTiles)).ToList();
+            var images = BuildImage(new List<TileSides>(), tileSides, (int) Math.Sqrt(distinctTiles));
             
-            var first = images.Last().Select(x => x.Id.Id).ToList();
+            var first = images.First().Select(x => x.Id.Id).ToList();
             
-            return ((long)first[0] * first.Last() * first[(int)Math.Sqrt(distinctTiles)-1] *
-                first[^((int) Math.Sqrt(distinctTiles))]).ToString();
+            return (
+                    (long)first[0] * 
+                    first.Last() * 
+                    first[(int)Math.Sqrt(distinctTiles)-1] *
+                    first[^(int) Math.Sqrt(distinctTiles)]
+                ).ToString();
         }
 
         private static List<TileSides> TilesWithMatchingEdges(List<Tile> tiles)
@@ -38,7 +42,6 @@ namespace AdventOfCode.Days
                 {
                     Id = tile.Id,
                     Left = left,
-
                     Top = top
                 });
             }
@@ -57,31 +60,31 @@ namespace AdventOfCode.Days
             {
                 var position = currentImage.Count + 1;
 
-                var foo = potentialTiles.Select(x => x);
+                var nextPotentialTiles = potentialTiles.Select(x => x);
                 if ((position - 1) % imageWidth != 0)
                 {
                     //needs a left hand side check
                     var toCheck = currentImage[^1];
-                    foo = foo.Where(x => x.Left.Contains(toCheck.Id)).ToList();
+                    nextPotentialTiles = nextPotentialTiles.Where(x => x.Left.Contains(toCheck.Id)).ToList();
                 }
 
                 if (position - imageWidth > 0)
                 {
                     //need a top check
                     var toCheck = currentImage[^imageWidth];
-                    foo = foo.Where(x => x.Top.Contains(toCheck.Id)).ToList();
+                    nextPotentialTiles = nextPotentialTiles.Where(x => x.Top.Contains(toCheck.Id)).ToList();
                 }
 
 
-                foreach (var potential in foo)
+                foreach (var potential in nextPotentialTiles)
                 {
                     var newCurrent = currentImage.Select(x => x).ToList();
                     newCurrent.Add(potential);
 
                     var newPotential = potentialTiles.Where(x => x.Id.Id != potential.Id.Id).ToList();
 
-                    var blah = BuildImage(newCurrent, newPotential, imageWidth);
-                    foreach (var image in blah)
+                    var images = BuildImage(newCurrent, newPotential, imageWidth);
+                    foreach (var image in images)
                     {
                         yield return image;
                     }
@@ -97,43 +100,24 @@ namespace AdventOfCode.Days
             var distinctTiles = tiles.Select(x => x.Id.Id).Distinct().Count();
             var images = BuildImage(new List<TileSides>(), tileSides, (int) Math.Sqrt(distinctTiles)).ToList();
             
-            var tileWidth = tiles.First().Length;
-            var unpaddedTileWidth = tileWidth - 2;
-            var width = Math.Sqrt(distinctTiles);
-            
-            
             foreach (var image in images)
             {
-                var resultsOne = image
+                var imageWidth = (int)Math.Sqrt(image.Count);
+                var results = image
                     .Select(x => tiles.Single(y => y.Id == x.Id))
-                    .Select(x => x.Data.Where(point => point.x != 0 && point.x != (tileWidth-1) && point.y != 0 && point.y != tileWidth-1)).ToList();
-                    
-                    var results = resultsOne.Select((x, idx) => x.Select(point =>
+                    .Select(t => t.RemoveEdges())
+                    .Select((t, idx) => t.ShiftBy(AsXYLocation(idx, imageWidth)))
+                    .Select(t => t.Data)
+                    .Aggregate((agg, nxt) =>
                     {
-                        int dx;
-                        if (idx < width)
-                        {
-                            dx = idx * unpaddedTileWidth;
-                        }
-                        else
-                        {
-                            dx = (int)(idx % width) * unpaddedTileWidth;
-                        }
-                        var dy = (int)(idx / width) * unpaddedTileWidth;
-                        return (point.x -1 + dx,
-                            (int) (point.y-1 +dy));
-                    }).ToList());
+                        agg.UnionWith(nxt);
+                        return agg;
+                    });
                 
-                var dataPoints = results.Aggregate((agg, nxt) =>
-                {
-                    agg.AddRange(nxt);
-                    return agg;
-                }).ToHashSet();
-                
-                var count = dataPoints.Count(dataPoint => IsSeaMonsterAt(dataPoint, dataPoints));
+                var count = results.Count(dataPoint => IsSeaMonsterAt(dataPoint, results));
 
                 if (count > 0)
-                    return (dataPoints.Count - (count * 15)).ToString();
+                    return (results.Count - (count * 15)).ToString();
             }
 
             return "-1";
@@ -218,12 +202,10 @@ namespace AdventOfCode.Days
         {
             public (int Id, int Rotation, bool Flipped) Id { get; init; }
             
-            //Length of a side
             public int Length { get; init; }
             
-            //HasSet of '#' points
             public HashSet<(int x, int y)> Data { get; init; }
-
+            
             public bool TopMatch(Tile other)
             {
                 var thisEdge = Data.Where(t => t.y == 0).Select(x => x.x).ToHashSet();
@@ -273,7 +255,41 @@ namespace AdventOfCode.Days
 
                 return this with {Id = (Id.Id, Id.Rotation, true), Data = newData};
             }
-            
+
+            public Tile RemoveEdges()
+            {
+                var data = Data.Where(point =>
+                    point.x != 0 &&
+                    point.x != (Length - 1) 
+                    && point.y != 0 && 
+                    point.y != Length - 1).ToHashSet();
+
+                return this with {
+                    Data = data,
+                    Length = Length - 2
+                    };
+            }
+
+            public Tile ShiftBy((int x, int y) coord)
+            {
+                var (x, y) = coord;
+                var data = Data.Select(point => (point.x + x * Length, point.y + y * Length)).ToHashSet();
+                return this with { Data = data};
+            }
+        }
+
+        //Assumes square
+        public (int x, int y) AsXYLocation(int idx, int length)
+        {
+            if (idx < length)
+            {
+                return (idx, 0);
+            }
+
+            var x = idx % length;
+            var y = idx / length;
+            return (x, y);
+
         }
         
         public record TileSides
