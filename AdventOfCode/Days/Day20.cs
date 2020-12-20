@@ -9,7 +9,18 @@ namespace AdventOfCode.Days
         public string PartOne(string[] input)
         {
             var tiles = ParseInput(input);
+            var tileSides = TilesWithMatchingEdges(tiles);
+            var distinctTiles = tiles.Select(x => x.Id.Id).Distinct().Count();
+            var images = BuildImage(new List<TileSides>(), tileSides, (int) Math.Sqrt(distinctTiles)).ToList();
             
+            var first = images.Last().Select(x => x.Id.Id).ToList();
+            
+            return ((long)first[0] * first.Last() * first[(int)Math.Sqrt(distinctTiles)-1] *
+                first[^((int) Math.Sqrt(distinctTiles))]).ToString();
+        }
+
+        private static List<TileSides> TilesWithMatchingEdges(List<Tile> tiles)
+        {
             var tileSides = new List<TileSides>();
             foreach (var tile in tiles)
             {
@@ -22,7 +33,7 @@ namespace AdventOfCode.Days
                     if (tile.LeftMatch(other))
                         left.Add(other.Id);
                 }
-                
+
                 tileSides.Add(new TileSides()
                 {
                     Id = tile.Id,
@@ -31,14 +42,8 @@ namespace AdventOfCode.Days
                     Top = top
                 });
             }
-            
-            var distinctTiles = tiles.Select(x => x.Id.Id).Distinct().Count();
-            
-            var images = BuildImage(new List<TileSides>(), tileSides, (int) Math.Sqrt(distinctTiles)).ToList();
-            
-            var first = images.Last().Select(x => x.Id.Id).ToList();
-            return ((long)first[0] * first.Last() * first[(int)Math.Sqrt(distinctTiles)-1] *
-                first[^((int) Math.Sqrt(distinctTiles))]).ToString();
+
+            return tileSides;
         }
 
 
@@ -88,37 +93,14 @@ namespace AdventOfCode.Days
         public string PartTwo(string[] input)
         {
             var tiles = ParseInput(input);
-
-            var tileSides = new List<TileSides>();
-            foreach (var tile in tiles)
-            {
-                List<(int Id, int Rotation, bool Flipped)> top = new();
-                List<(int Id, int Rotation, bool Flipped)> left = new();
-                foreach (var other in tiles.Where(other => tile.Id.Id != other.Id.Id))
-                {
-                    if (tile.TopMatch(other))
-                        top.Add(other.Id);
-                    if (tile.LeftMatch(other))
-                        left.Add(other.Id);
-
-                }
-                
-                tileSides.Add(new TileSides()
-                {
-                    Id = tile.Id,
-                    Left = left,
-
-                    Top = top
-                });
-            }
-
+            var tileSides = TilesWithMatchingEdges(tiles);
             var distinctTiles = tiles.Select(x => x.Id.Id).Distinct().Count();
+            var images = BuildImage(new List<TileSides>(), tileSides, (int) Math.Sqrt(distinctTiles)).ToList();
+            
             var tileWidth = tiles.First().Length;
             var unpaddedTileWidth = tileWidth - 2;
             var width = Math.Sqrt(distinctTiles);
             
-            var images = BuildImage(new List<TileSides>(), tileSides, (int) Math.Sqrt(distinctTiles)).ToList();
-
             
             foreach (var image in images)
             {
@@ -148,7 +130,7 @@ namespace AdventOfCode.Days
                     return agg;
                 }).ToHashSet();
                 
-                var count = dataPoints.Count(dataPoint => SeaMonster(dataPoint, dataPoints));
+                var count = dataPoints.Count(dataPoint => IsSeaMonsterAt(dataPoint, dataPoints));
 
                 if (count > 0)
                     return (dataPoints.Count - (count * 15)).ToString();
@@ -157,30 +139,30 @@ namespace AdventOfCode.Days
             return "-1";
         }
 
-        public bool SeaMonster((int x, int y) startingPoint, HashSet<(int x, int y)> allPoints)
+        public bool IsSeaMonsterAt((int x, int y) startingPoint, HashSet<(int x, int y)> allPoints)
         {
-            return allPoints.Contains((startingPoint.x + 5, startingPoint.y)) &&
-                   allPoints.Contains((startingPoint.x + 6, startingPoint.y)) &&
-                   allPoints.Contains((startingPoint.x + 11, startingPoint.y)) &&
-                   allPoints.Contains((startingPoint.x + 12, startingPoint.y)) &&
-                   allPoints.Contains((startingPoint.x + 17, startingPoint.y)) &&
-                   allPoints.Contains((startingPoint.x + 18, startingPoint.y)) &&
-                   allPoints.Contains((startingPoint.x + 19, startingPoint.y)) &&
-                   allPoints.Contains((startingPoint.x + 18, startingPoint.y - 1)) &&
-                   allPoints.Contains((startingPoint.x + 1, startingPoint.y + 1)) &&
-                   allPoints.Contains((startingPoint.x + 4, startingPoint.y + 1)) &&
-                   allPoints.Contains((startingPoint.x + 7, startingPoint.y + 1)) &&
-                   allPoints.Contains((startingPoint.x + 10, startingPoint.y + 1)) &&
-                   allPoints.Contains((startingPoint.x + 13, startingPoint.y + 1)) &&
-                   allPoints.Contains((startingPoint.x + 16, startingPoint.y + 1));
+            var (x, y) = startingPoint;
+            return allPoints.Contains((x + 5, y)) &&
+                   allPoints.Contains((x + 6, y)) &&
+                   allPoints.Contains((x + 11, y)) &&
+                   allPoints.Contains((x + 12, y)) &&
+                   allPoints.Contains((x + 17, y)) &&
+                   allPoints.Contains((x + 18, y)) &&
+                   allPoints.Contains((x + 19, y)) &&
+                   allPoints.Contains((x + 18, y - 1)) &&
+                   allPoints.Contains((x + 1, y + 1)) &&
+                   allPoints.Contains((x + 4, y + 1)) &&
+                   allPoints.Contains((x + 7, y + 1)) &&
+                   allPoints.Contains((x + 10, y + 1)) &&
+                   allPoints.Contains((x + 13, y + 1)) &&
+                   allPoints.Contains((x + 16, y + 1));
         }
 
         public List<Tile> ParseInput(string[] input)
         {
             List<Tile> tiles = new();
             Tile tile = new();
-
-
+            
             var y = 0;
             var length = 0;
             HashSet<(int x, int y)> data = new();
@@ -236,6 +218,7 @@ namespace AdventOfCode.Days
         {
             public (int Id, int Rotation, bool Flipped) Id { get; init; }
             
+            //Length of a side
             public int Length { get; init; }
             
             //HasSet of '#' points
@@ -243,49 +226,49 @@ namespace AdventOfCode.Days
 
             public bool TopMatch(Tile other)
             {
-                var thisTop = Data.Where(t => t.y == 0).Select(x => x.x).ToHashSet();
-                var otherBottom = other.Data.Where(t => t.y == Length-1).Select(x => x.x).ToHashSet();
+                var thisEdge = Data.Where(t => t.y == 0).Select(x => x.x).ToHashSet();
+                var otherEdge = other.Data.Where(t => t.y == Length-1).Select(x => x.x).ToHashSet();
 
-                return thisTop.SetEquals(otherBottom);
+                return thisEdge.SetEquals(otherEdge);
             }
 
             public bool LeftMatch(Tile other)
             {
-                var thisTop = Data.Where(t => t.x == 0).Select(x => x.y).ToHashSet();
-                var otherBottom = other.Data.Where(t => t.x == Length-1).Select(x => x.y).ToHashSet();
+                var thisEdge = Data.Where(t => t.x == 0).Select(x => x.y).ToHashSet();
+                var otherEdge = other.Data.Where(t => t.x == Length-1).Select(x => x.y).ToHashSet();
 
-                return thisTop.SetEquals(otherBottom);           
+                return thisEdge.SetEquals(otherEdge);           
             }
             
             public Tile Rotate(int rotation)
             {
                 var newData = new HashSet<(int x, int y)>();
-                    foreach (var point in Data)
-                    {
-                        var x1 = point.x - (Length-1)/2d;
-                        var y1 = point.y - (Length-1)/2d;
+                foreach (var point in Data)
+                {
+                    var x1 = point.x - (Length-1)/2d;
+                    var y1 = point.y - (Length-1)/2d;
 
-                        var angle = (rotation * Math.PI) / 180;
+                    var angle = (rotation * Math.PI) / 180;
 
-                        var newX = x1 * Math.Cos(angle) - y1 * Math.Sin(angle);
-                        var newY = x1 * Math.Sin(angle) + y1 * Math.Cos(angle);
-                        
-                        var x = Math.Round(newX + (Length-1)/2d);
-                        var y=  Math.Round(newY + (Length-1)/2d);
+                    var newX = x1 * Math.Cos(angle) - y1 * Math.Sin(angle);
+                    var newY = x1 * Math.Sin(angle) + y1 * Math.Cos(angle);
+                    
+                    var x = Math.Round(newX + (Length-1)/2d);
+                    var y=  Math.Round(newY + (Length-1)/2d);
 
-                        newData.Add(((int)x, (int)y));
-                    }
+                    newData.Add(((int)x, (int)y));
+                }
 
-                    return this with {Id = (Id.Id, rotation, Id.Flipped), Data = newData};
+                return this with {Id = (Id.Id, rotation, Id.Flipped), Data = newData};
             }
 
             public Tile Flip()
             {
                 var newData = new HashSet<(int x, int y)>();
-                foreach (var point in Data)
+                foreach (var (i, y) in Data)
                 {
-                    var x = Length - 1 - point.x;
-                    newData.Add((x, point.y));
+                    var x = Length - 1 - i;
+                    newData.Add((x, y));
                 }
 
                 return this with {Id = (Id.Id, Id.Rotation, true), Data = newData};
