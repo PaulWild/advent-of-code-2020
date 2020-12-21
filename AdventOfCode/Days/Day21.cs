@@ -7,24 +7,11 @@ namespace AdventOfCode.Days
     {
         public string PartOne(string[] input)
         {
-            var (ingredientCount, allergenList, allergenSet) = ParseInput(input);
+            var (ingredientCount ,potentialAllergen) = ParseInput(input);
 
-            HashSet<string> potentialAllergen = new();
-            foreach (var allergen in allergenSet)
-            {
-                var toCheck = allergenList
-                    .Where(x => x.allergen == allergen)
-                    .Select(x => new HashSet<string>(x.ingredients))
-                    .Aggregate((nxt, agg) =>
-                        {
-                            nxt.IntersectWith(agg);
-                            return nxt;
-                        });
-                potentialAllergen.UnionWith(toCheck);
-            }
-
+            var allergens = potentialAllergen.Values.SelectMany(x => x).ToHashSet();
             var num = ingredientCount
-                .Where(kvp => !potentialAllergen.Contains(kvp.Key))
+                .Where(kvp => !allergens.Contains(kvp.Key))
                 .Sum(kvp => kvp.Value);
             
             return num.ToString();
@@ -32,57 +19,33 @@ namespace AdventOfCode.Days
         
         public string PartTwo(string[] input)
         {
-            var (_, allergenList, allergenSet) = ParseInput(input);
-
-            Dictionary<string,string[]> potentialAllergen= new();
-            foreach (var allergen in allergenSet)
-            {
-                var toCheck = allergenList.Where(x => x.allergen == allergen).ToList();
-                var hmm = toCheck.Select(x => new HashSet<string>(x.ingredients)).Aggregate((nxt, agg) =>
-                {
-                    nxt.IntersectWith(agg);
-                    return nxt;
-                });
-
-                potentialAllergen.Add(allergen, hmm.ToArray());
-            }
+            var (_, potentialAllergen) = ParseInput(input);
             
-            for(;;)
+            while (potentialAllergen.Values.Any(x => x.Count != 1))
             {
-
-                foreach (var allergen in allergenSet)
+                foreach (var allergen in potentialAllergen.Keys)
                 {
                     var potAllergens = potentialAllergen[allergen];
-                    if (potAllergens.Length != 1) continue;
+                    if (potAllergens.Count != 1) continue;
                     
                     foreach (var (key, value) in potentialAllergen)
                     {
                         if (key == allergen)
                             continue;
 
-                        var newList = value.Where(x => x != potAllergens.Single()).ToArray();
+                        var newList = value.Where(x => x != potAllergens.Single()).ToHashSet();
                         potentialAllergen[key] = newList;
-
                     }
                 }
-                    
-                if (potentialAllergen.Values.Any(x => x.Length == 0))
-                    break;
-                if (potentialAllergen.Values.All(x => x.Length == 1))
-                {
-                    return string.Join(",", potentialAllergen.OrderBy(x => x.Key).Select(x => x.Value.Single()));
-                }
             }
-
-
-            return "-1";
+            
+            return string.Join(",", potentialAllergen.OrderBy(x => x.Key).Select(x => x.Value.Single()));
         }
 
-        private static (Dictionary<string, int> allergenCount, List<(string allergen, string[] ingredients)> allergenList, HashSet<string> allergenSet) ParseInput(IEnumerable<string> input)
+        private static (Dictionary<string, int> allergenCount, Dictionary<string,HashSet<string>>) ParseInput(IEnumerable<string> input)
         {
             Dictionary<string, int> ingredientCount = new();
-            List<(string allergen, string[] ingredients)> allergenList = new();
-            HashSet<string> allergenSet = new();
+            Dictionary<string,HashSet<string>> potentialAllergen= new();
 
             foreach (var row in input)
             {
@@ -100,12 +63,18 @@ namespace AdventOfCode.Days
 
                 foreach (var allergen in allergens)
                 {
-                    allergenSet.Add(allergen);
-                    allergenList.Add((allergen, ingredients));
+                    if (potentialAllergen.ContainsKey(allergen))
+                    {
+                        potentialAllergen[allergen].IntersectWith(ingredients);
+                    }
+                    else
+                    {
+                        potentialAllergen[allergen] = new HashSet<string>(ingredients);
+                    }
                 }
             }
-
-            return (ingredientCount, allergenList, allergenSet);
+            
+            return (ingredientCount, potentialAllergen);
         }
         
         public int Day => 21;
