@@ -16,11 +16,10 @@ namespace AdventOfCode.Days
             var first = images.First().Select(x => x.Id.Id).ToList();
             
             return (
-                    (long)first[0] * 
-                    first.Last() * 
-                    first[(int)Math.Sqrt(distinctTiles)-1] *
-                    first[^(int) Math.Sqrt(distinctTiles)]
-                ).ToString();
+                (long)first[0] * 
+                first.Last() * 
+                first[(int)Math.Sqrt(distinctTiles)-1] *
+                first[^((int) Math.Sqrt(distinctTiles))]).ToString();
         }
 
         private static List<TileSides> TilesWithMatchingEdges(List<Tile> tiles)
