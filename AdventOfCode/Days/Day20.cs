@@ -73,10 +73,11 @@ namespace AdventOfCode.Days
                     var toCheck = currentImage[^imageWidth];
                     nextPotentialTiles = nextPotentialTiles.Where(x => x.Top.Contains(toCheck.Id)).ToList();
                 }
-
-
+                
                 foreach (var potential in nextPotentialTiles)
                 {
+
+                    
                     var newCurrent = currentImage.Select(x => x).ToList();
                     newCurrent.Add(potential);
 
