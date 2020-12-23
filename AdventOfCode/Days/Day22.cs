@@ -100,8 +100,8 @@ namespace AdventOfCode.Days
         
         public void PlayRecursiveCombatRound(Queue<int> player1, Queue<int> player2, HashSet<(int, int)> seenHands)
         {
-            var hashCodePlayer1 = player1.ToList().GetSequenceHashCode();
-            var hashCodePlayer2 = player2.ToList().GetSequenceHashCode();
+            var hashCodePlayer1 = player1.GetSequenceHashCode();
+            var hashCodePlayer2 = player2.GetSequenceHashCode();
             var item = (hashCodePlayer1, hashCodePlayer2);
             
             bool player1Win = seenHands.Contains(item);

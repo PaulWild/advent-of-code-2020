@@ -1,21 +1,18 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace AdventOfCode.Common
 {
     public static class ListExtensions
     {
-        public static int GetSequenceHashCode<T>(this IList<T> sequence)
+        public static int GetSequenceHashCode<T>(this IEnumerable<T> sequence)
         {
-            const int seed = 487;
-            const int modifier = 31;
-
-            unchecked
+            var hash = new HashCode();
+            foreach (var element in sequence)
             {
-                return sequence.Aggregate(seed, (current, item) =>
-                    (current*modifier) + item.GetHashCode());
-            }            
+                hash.Add(element);
+            }
+            return hash.ToHashCode();
         }
-
     }
 }
