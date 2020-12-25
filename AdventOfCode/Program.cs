@@ -113,7 +113,7 @@ namespace AdventOfCode
                 : "";
             
             var timeColor = timeInMillis > 50  
-                ? timeInMillis > 100 
+                ? timeInMillis > 1000 
                     ? ConsoleColor.Red 
                     : ConsoleColor.Yellow 
                 : ConsoleColor.Green;
